@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <!--
+      SVG first for browsers that take it; a PNG beside it because Google's
+      favicon documentation does not list SVG among the formats it states
+      support for, and the icon next to an Arabic search result matters.
+      apple-touch-icon stops iOS screenshotting the page on "add to home
+      screen". All are generated from favicon.svg by `npm run og`.
+    -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <!--
+      One theme-color, set from the saved theme by the script below and kept in
+      step by src/hooks/useTheme.ts. Media-query variants would follow the OS
+      instead, and the theme here is a choice that can disagree with it: the
+      browser chrome would then sit light above a dark page. The two values are
+      --color-ink-50 and --color-ink-950 from src/index.css, resolved to sRGB.
+    -->
+    <meta name="theme-color" content="#fbfaf7" />
+    <meta name="description" content="كتابٌ نزل مفرَّقًا في ثلاثٍ وعشرين سنة، بين اضطهادٍ وهجرةٍ وحربٍ ودولة، ثم يدعو الشاكّين فيه إلى تفتيشه عن التناقض. أيّ مؤلِّفٍ يجرؤ على هذه الدعوة؟" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://thinkaboutislam.com/lessons/no-contradiction/" />
+    <link rel="canonical" href="https://thinkaboutislam.com/lessons/no-contradiction/" />
+    <link rel="alternate" hreflang="ar" href="https://thinkaboutislam.com/lessons/no-contradiction/" />
+    <link rel="alternate" hreflang="en" href="https://thinkaboutislam.com/en/lessons/no-contradiction/" />
+    <link rel="alternate" hreflang="x-default" href="https://thinkaboutislam.com/lessons/no-contradiction/" />
+    <meta property="og:locale" content="ar_AR" />
+    <meta property="og:site_name" content="لماذا الإسلام؟" />
+    <!--
+      og:image itself is not here: it has to be absolute, because a link-preview
+      crawler has no base to resolve against, and the origin is only known to
+      site.config.mjs. scripts/prerender-routes.mjs inserts it above this line
+      for every built page, and throws if this tag ever stops matching.
+      Regenerate the image with `npm run og`; the verse on the card is sliced
+      out of the pinned mushaf, never typed.
+    -->
+    <meta property="og:image" content="https://thinkaboutislam.com/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta
+      property="og:image:alt"
+      content="لماذا الإسلام؟ · دليلٌ هادئ من السؤال إلى اليقين، بالعقل والقرآن"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:title" content="لا اختلاف فيه · لماذا الإسلام؟" />
+    <meta property="og:description" content="كتابٌ نزل مفرَّقًا في ثلاثٍ وعشرين سنة، بين اضطهادٍ وهجرةٍ وحربٍ ودولة، ثم يدعو الشاكّين فيه إلى تفتيشه عن التناقض. أيّ مؤلِّفٍ يجرؤ على هذه الدعوة؟" />
+    <title>لا اختلاف فيه · لماذا الإسلام؟</title>
+    <script>
+      // Apply the saved theme before the first paint, so there is no flash of
+      // the wrong colours. The React side reads it back from here
+      // (src/hooks/useTheme.ts).
+      ;(function () {
+        try {
+          var saved = localStorage.getItem('why-islam-theme')
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+          var isDark = saved ? saved === 'dark' : prefersDark
+          document.documentElement.classList.toggle('dark', isDark)
+          document
+            .querySelector('meta[name="theme-color"]')
+            .setAttribute('content', isDark ? '#0d1015' : '#fbfaf7')
+        } catch (e) {
+          /* private browsing: fall back to the light theme */
+        }
+      })()
+    </script>
+
+    <!--
+      The boot placeholder, styled here rather than in src/index.css so it needs
+      nothing but the HTML itself. React's createRoot clears #root on mount, so
+      this is only ever on screen while the JavaScript is still arriving.
+
+      It fades in after 450ms. On a normal connection the app is up before that
+      and the reader never sees it at all; a placeholder that flashes for 80ms
+      is worse than none. On a slow one it replaces a blank page.
+    -->
+    <style>
+      .boot {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        background: #fbfaf7;
+        font-family: 'Cairo Variable', system-ui, sans-serif;
+        color: #5e5c56;
+        opacity: 0;
+        animation: boot-in 0.3s ease 0.45s forwards;
+      }
+      .dark .boot {
+        background: #0d1015;
+        color: #8b8983;
+      }
+      .boot-ring {
+        width: 2.25rem;
+        height: 2.25rem;
+        border: 3px solid #e7e5e0;
+        border-top-color: #33589c;
+        border-radius: 50%;
+        animation: boot-spin 0.9s linear infinite;
+      }
+      .dark .boot-ring {
+        border-color: #272b34;
+        border-top-color: #8da9dd;
+      }
+      .boot-text {
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+      @keyframes boot-in {
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes boot-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      /* Someone who has asked for less motion gets the words, not the spinner. */
+      @media (prefers-reduced-motion: reduce) {
+        .boot {
+          animation: none;
+          opacity: 1;
+        }
+        .boot-ring {
+          display: none;
+        }
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-BCa78KLH.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/usePageTitle-CMqnEsDC.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DZqI2BnJ.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/cairo-arabic-wght-normal-CJWMIGCx.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/amiri-quran-arabic-400-normal-wRcqfVJx.woff2" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"لماذا الإسلام؟","item":"https://thinkaboutislam.com/"},{"@type":"ListItem","position":2,"name":"القرآن معجزةٌ باقية"},{"@type":"ListItem","position":3,"name":"لا اختلاف فيه","item":"https://thinkaboutislam.com/lessons/no-contradiction/"}]}</script>
+  </head>
+  <body>
+    <div id="root">
+      <div class="boot" role="status">
+        <span class="boot-ring" aria-hidden="true"></span>
+        <span class="boot-text">جارٍ تحميل الدليل…</span>
+      </div>
+    </div>
+  </body>
+</html>

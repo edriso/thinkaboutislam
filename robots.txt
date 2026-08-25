@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://thinkaboutislam.com/sitemap.xml
